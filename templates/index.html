@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Trafik Yoğunluk Tahmini</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .kart {
+            background-color: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            width: 400px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 22px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            color: #555;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .sonuc {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .yuksek { background-color: #ffcccc; color: #c0392b; }
+        .orta   { background-color: #fff3cd; color: #d68910; }
+        .dusuk  { background-color: #d4edda; color: #1e8449; }
+    </style>
+</head>
+<body>
+    <div class="kart">
+        <h1>🚦 Trafik Yoğunluk Tahmini</h1>
+
+        <form action="/tahmin" method="POST">
+            <label>Saat (0-23):</label>
+            <input type="number" name="saat" min="0" max="23" required placeholder="Örn: 8">
+
+            <label>Gün:</label>
+            <select name="gun">
+                <option value="1">Hafta İçi</option>
+                <option value="2">Normal Gün</option>
+                <option value="3">Hafta Sonu</option>
+            </select>
+
+            <label>Hava Durumu:</label>
+            <select name="hava">
+                <option value="0">Açık</option>
+                <option value="1">Yağmurlu</option>
+            </select>
+
+            <button type="submit">Tahmin Et</button>
+        </form>
+
+        {% if sonuc %}
+        <div class="sonuc {{ sonuc }}">
+            📊 Tahmin Sonucu: {{ sonuc | upper }}
+            <br>
+            <small>Saat: {{ saat }} | Gün: {{ gun }} | Hava: {{ hava }}</small>
+        </div>
+        {% endif %}
+    </div>
+    {% if gecmis %}
+        <h3 style="text-align:center; margin-top:30px; color:#333;">📋 Geçmiş Tahminler</h3>
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
+            <tr style="background:#4CAF50; color:white;">
+                <th style="padding:8px;">#</th>
+                <th style="padding:8px;">Saat</th>
+                <th style="padding:8px;">Gün</th>
+                <th style="padding:8px;">Hava</th>
+                <th style="padding:8px;">Sonuç</th>
+            </tr>
+            {% for satir in gecmis %}
+            <tr style="text-align:center; border-bottom:1px solid #ddd;">
+                <td style="padding:8px;">{{ satir[0] }}</td>
+                <td style="padding:8px;">{{ satir[1] }}</td>
+                <td style="padding:8px;">{{ satir[2] }}</td>
+                <td style="padding:8px;">{{ satir[3] }}</td>
+                <td style="padding:8px;"><b>{{ satir[4] }}</b></td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% endif %}
+</body>
+</html>
